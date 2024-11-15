@@ -1,4 +1,3 @@
-# Do-An-Lap-Trinh-python-Nang-Cao-241_71ITSE31003_01-
 # Đồ án môn học - Tổng hợp 3 bài tập nhỏ
 
 ## Mô tả
