@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Background gradient */
+        body {
+            background: linear-gradient(135deg, #e7daf4 0%, #afccff 100%);
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        /* Container styling */
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            max-width: 1000px;
+            margin-top: 40px;
+        }
+        /* Title styling */
+        h2, h3 {
+            color: #333;
+            font-weight: 700;
+        }
+        /* Button styling */
+        .btn {
+            border-radius: 20px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #6C7EE1;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #92B9E3;
+        }
+        .btn-warning {
+            background-color: #FFC4A4;
+            border: none;
+        }
+        .btn-danger {
+            background-color: #b4000c;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #A4c3A2;
+            border: none;
+        }
+        /* Table styling */
+        .table {
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .table th {
+            background-color: #4ea1fa;
+            color: #ffffff;
+            text-align: center;
+        }
+        .table td, .table th {
+            padding: 12px;
+            vertical-align: middle;
+        }
+        /* Form styling */
+        .form-control {
+            border-radius: 20px;
+            padding: 10px;
+        }
+        /* Message alert styling */
+        .alert-dismissible {
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .text-center a {
+            color: #6a11cb;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .text-center a:hover {
+            color: #2575fc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Quản Lý Sinh Viên</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert alert-dismissible fade show" role="alert">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="text-right mb-3">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+            </a>
+        </div>
+
+        <form method="POST">
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="name">Tên:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="age">Tuổi:</label>
+                    <input type="number" class="form-control" id="age" name="age" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="gender">Giới tính:</label>
+                    <select class="form-control" id="gender" name="gender" required>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="mssv">Mã số sinh viên (MSSV):</label>
+                    <input type="text" class="form-control" id="mssv" name="mssv" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="major">Chuyên ngành:</label>
+                    <select class="form-control" id="major" name="major" required>
+                        <option value="" disabled selected>Chọn chuyên ngành</option>
+                        <option value="Công nghệ thông tin">Công nghệ thông tin</option>
+                        <option value="Quan hệ công chúng">Quan hệ công chúng</option>
+                        <option value="Thiết kế">Thiết kế</option>
+                        <option value="Quản trị kinh doanh">Quản trị kinh doanh</option>
+                        <option value="Kế toán">Kế toán</option>
+                        <option value="Cơ khí - Điện tử">Cơ khí - Điện tử</option>
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" name="student_id" id="student_id">
+            <button type="submit" name="action" value="add" class="btn btn-primary">Thêm Sinh Viên</button>
+            <button type="submit" name="action" value="update" class="btn btn-warning">Cập Nhật Sinh Viên</button>
+            <button type="submit" name="action" value="delete" class="btn btn-danger" onclick="return confirmDelete()">Xóa Sinh Viên</button>
+            <button type="submit" name="action" value="reload" class="btn btn-secondary">Tải lại</button>
+        </form>
+
+        <h3 class="mt-5 text-center">Danh Sách Sinh Viên</h3>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>Tuổi</th>
+                    <th>Giới Tính</th>
+                    <th>Chuyên Ngành</th>
+                    <th>Mã Số Sinh Viên (MSSV)</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student[0] }}</td>
+                    <td>{{ student[1] }}</td>
+                    <td>{{ student[2] }}</td>
+                    <td>{{ student[3] }}</td>
+                    <td>{{ student[4] }}</td>
+                    <td>{{ student[5] }}</td>
+                    <td>
+                        <button class="btn btn-info" onclick="editStudent('{{ student[0] }}', '{{ student[1] }}', '{{ student[2] }}', '{{ student[3] }}', '{{ student[4] }}', '{{ student[5] }}')">Chỉnh sửa</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Font Awesome for icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        function editStudent(id, name, age, gender, major, mssv) {
+            document.getElementById('student_id').value = id;
+            document.getElementById('name').value = name;
+            document.getElementById('age').value = age;
+            document.getElementById('gender').value = gender;
+            document.getElementById('major').value = major;
+            document.getElementById('mssv').value = mssv;
+        }
+
+        // JavaScript function to confirm deletion
+        function confirmDelete() {
+            return confirm('Bạn có chắc chắn muốn xóa sinh viên này không?');
+        }
+    </script>
+</body>
+</html>

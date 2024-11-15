@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Student Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Background gradient */
+        body {
+            background: linear-gradient(135deg, #cea9f6 0%, #2575fc 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+        }
+        /* Card styling */
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        /* Form styling */
+        .login-container h2 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .form-control {
+            border-radius: 20px;
+            padding: 10px 15px;
+        }
+        .btn-primary {
+            background-color: #6a11cb;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 30px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #2575fc;
+        }
+        .alert-danger {
+            border-radius: 20px;
+        }
+        /* Link styling */
+        .text-center a {
+            color: #6a11cb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .text-center a:hover {
+            color: #2575fc;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Đăng Nhập</h2>
+        
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="alert alert-danger" role="alert">
+              {{ messages[0] }}
+            </div>
+          {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Tên tài khoản:</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mật khẩu:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Đăng Nhập</button>
+        </form>
+        
+        <p class="mt-3 text-center">Chưa có tài khoản? <a href="{{ url_for('register') }}">Đăng ký</a></p>
+    </div>
+</body>
+</html>
